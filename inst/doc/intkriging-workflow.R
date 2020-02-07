@@ -1,15 +1,15 @@
-## ----setup, include = FALSE----------------------------------------------
+## ----setup, include = FALSE---------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(intkrige)
 data(ohtemp)
 head(ohtemp)
 
-## ----ohioMap, eval = FALSE, echo = FALSE---------------------------------
+## ----ohioMap, eval = FALSE, echo = FALSE--------------------------------------
 #  
 #  library(ggmap)
 #  # # Load the Ohio River Basin Shapefile
@@ -49,7 +49,7 @@ head(ohtemp)
 #  map
 #  dev.off()
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # First, create a SpatialPointsDataFrame in the usual way
 sp::coordinates(ohtemp) <- c("LONGITUDE", "LATITUDE")
 sp::proj4string(ohtemp) <- CRS("+proj=longlat +ellps=WGS84")
@@ -57,23 +57,23 @@ interval(ohtemp) <- c("minm", "maxm")
 
 head(ohtemp)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 interval(ohtemp) <- log(interval(ohtemp))
 head(ohtemp)
 
-## ---- fig.align='center'-------------------------------------------------
+## ---- fig.align='center'------------------------------------------------------
 # Revert back to the standard interval
 interval(ohtemp) <- exp(interval(ohtemp))
 varios <- intvariogram(ohtemp, cutoff = 500)
 
 plot(varios)
 
-## ---- fig.align='center'-------------------------------------------------
+## ---- fig.align='center'------------------------------------------------------
 varioFit <- fit.intvariogram(varios, models = gstat::vgm(c("Lin", "Sph", "Sph")))
 varioFit
 intvCheck(varios, varioFit)
 
-## ---- fig.align='center'-------------------------------------------------
+## ---- fig.align='center'------------------------------------------------------
 # Replace non-convergent variogram fit with a surrogate that 
 # contains a reasonable range and sill. 
 varioFit[[1]] <- gstat::vgm(psill = 350, nugget = 4.608542, 
@@ -81,7 +81,7 @@ varioFit[[1]] <- gstat::vgm(psill = 350, nugget = 4.608542,
 
 intvCheck(varios, varioFit)
 
-## ---- fig.align = 'center'-----------------------------------------------
+## ---- fig.align = 'center'----------------------------------------------------
 # Include the Ohio river basin shapefile
 data(ohMap)
 
